@@ -1,0 +1,45 @@
+attack_technique: Manipulate_PowershellHistory
+display_name: Manipulate_PowershellHistory
+atomic_tests:
+- name: Delete Powershell command history file
+  auto_generated_guid: 19b143de-6ed1-47bc-a076-d2d44de5a5dc
+  description: |
+    Delete ConsoleHost_history.txt or PSReadLine_history.txt
+  supported_platforms:
+    - windows
+  input_arguments:
+    FileName:
+      description: command that will be executed
+      type: string
+      default: ConsoleHost_history    
+  executor:
+    command: |
+     remove-item $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\#{FileName}
+    name: powershell
+    elevation_required: false
+- name: Stop powershell Command history logging by Set-PSReadLineOption
+  auto_generated_guid: bc3fa8e7-951e-4f90-b13c-5553cab997b7
+  description: |
+    Stop powershell command history logging
+  supported_platforms:
+    - windows
+  executor:
+    command: |
+     Set-PSReadLineOption -HistorySaveStyle SaveNothing
+    cleanup_command: |
+     Set-PSReadLineOption -HistorySaveStyle SaveIncrementally
+    name: powershell
+    elevation_required: false
+- name: Stop powershell Command history logging by Remove the module
+  auto_generated_guid: 3650564c-57c7-4831-82a7-1c22494cd750
+  description: |
+    Stop powershell command history logging
+  supported_platforms:
+    - windows
+  executor:
+    command: |
+     Remove-Module -Name PsReadline
+    cleanup_command: |
+     Install-Module -Name PSReadLine
+    name: powershell
+    elevation_required: true

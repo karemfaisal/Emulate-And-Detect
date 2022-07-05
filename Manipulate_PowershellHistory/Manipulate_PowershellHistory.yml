@@ -1,0 +1,91 @@
+title: Delete Powershell command history
+id: e797eaed-bd33-49a9-a0ce-9bf7223c5409
+description: Detects the deletion of [ConsoleHost_history.txt, PSReadLine_history.txt] which contains the command history of powershell sessions
+status: Stable
+author: Karem Ali
+date: 2022/06/25
+tags:
+  - attack.T1562
+  - attack.Defense_evasion
+  - attack.T1562.03
+  - attack.impair_defenses
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - SysmonModular rules don't containe default rules for generating the required logs for this rule, add FileDeleteDected for ConsoleHost_history.txt
+        - those event could be mapped to any EDR equivelent events.
+detection:
+  FileDelete:
+    EventID: 23
+    FileName: 
+      - ConsoleHost_history.txt
+      - PSReadLine_history.txt
+  condition: FileDelete
+falsepositives: 
+  - None
+level: high
+---
+title: Disable Powershell PSReadLine History
+id: c4bb0930-0e3e-41ee-b296-de34a3991824
+description: Detect Powershell commands that Disable powershell command history
+status: Stable
+author: Karem Ali
+date: 2022/06/25
+tags:
+  - attack.T1562
+  - attack.Defense_evasion
+  - attack.T1562.03
+  - attack.impair_defenses
+logsource:
+    product: windows
+    service: powershellOperational
+    defination:
+        - it's not enabled by default, enable scriptblock logging from group policy.
+detection:
+  Event:
+    EventID: 4104
+  Command1:
+    ScriptBlock|contains|all:
+      - "set-PSReadLineOption"
+      - "savenothing"
+  Command2:
+    ScriptBlock|contains|all:
+      - "Remove-Module"
+      - "PsReadLine"
+  condition: Event and (Command1 or Command2)
+falsepositives: 
+  - Not likely that the administrator will execute such a command
+level: high
+---
+title: Disable Powershell PSReadLine History
+id: e73cf609-60ad-40ad-b6d2-a99ad6c73792
+description: Detect Powershell commands that Disable powershell command history
+status: Stable
+author: Karem Ali
+date: 2022/06/25
+tags:
+  - attack.T1562
+  - attack.Defense_evasion
+  - attack.T1562.03
+  - attack.impair_defenses
+logsource:
+    product: windows
+    service: powershell
+    defination:
+        - Windows Powershell channel is enabled by default
+detection:
+  Event:
+    EventID: 400
+  Command1:
+    HostApplication|contains|all:
+      - "set-PSReadLineOption"
+      - "savenothing"
+  Command2:
+    HostApplication|contains|all:
+      - "Remove-Module"
+      - "PsReadLine"
+  condition: Event and (Command1 or Command2)
+falsepositives: 
+  - Not likely that the administrator will execute such a command
+level: high
