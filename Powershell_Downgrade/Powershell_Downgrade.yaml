@@ -1,0 +1,19 @@
+attack_technique: Downgrade powershell to version 2
+display_name: Downgrade powershell to version 2
+atomic_tests:
+- name: Downgrade powershell to version 2
+  auto_generated_guid: cd2d6ee2-219a-4e45-a168-b461e509280b
+  description: |
+    Downgrading powershell to version 2 disable most of powershell logging such as scriptblock logging [EID 4104] and disable command line in EID 400
+  supported_platforms:
+    - windows
+  input_arguments:
+    Command:
+      description: command that will be executed
+      type: string
+      default: new-item -Type File c:\windows\temp\Powershell-Downgrade.txt     
+  executor:
+    command: |
+     powershell.exe -version 2 #{Command}
+    name: command_prompt
+    elevation_required: false

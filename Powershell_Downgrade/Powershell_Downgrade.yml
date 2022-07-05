@@ -1,0 +1,22 @@
+title: Powershell downgrade to version 2
+id: 5366d596-1d53-4fd9-9c15-ac019701a050
+description: Detects Downgrading powershell to version 2
+status: Stable
+author: Karem Ali
+date: 2022/06/25
+tags:
+  - attack.T1562
+  - attack.Defense_evasion
+  - attack.T1562.10
+  - attack.impair_defenses
+logsource:
+    product: windows
+    service: powershell
+detection:
+  PowershellStart:
+    EventID: 400
+    HostVersion: '2.0'
+  condition: PowershellStart
+falsepositives: 
+  - Windows 7 already run powershell version 2 by default. 
+level: high
