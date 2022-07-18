@@ -24,5 +24,3 @@ atomic_tests:
     name: command_prompt
     elevation_required: false
 
-# Note: The executable in the mpnotify will be terminated automatically after 30 sec
-
