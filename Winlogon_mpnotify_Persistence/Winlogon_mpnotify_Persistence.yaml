@@ -1,0 +1,24 @@
+attack_technique: Winlogon_mpnotify_Persistence
+display_name: Winlogon_mpnotify_Persistence
+atomic_tests:
+- name: Add executable to mpnotify value
+  auto_generated_guid: 7311a96d-7075-4967-8da7-35eb2367424a
+  description: |
+    Add executable to mpnotify value
+  supported_platforms:
+    - windows
+  input_arguments:
+    EXEPath:
+      description: Path to the persistened executable
+      type: string
+      default: c:\windows\system32\calc.exe   
+  executor:
+    command: |
+     REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v mpnotify /t REG_SZ  /d #{EXEPath} /f
+    cleanup_command: |
+      REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v mpnotify /f
+    name: command_prompt
+    elevation_required: true
+
+# Note: The executable in the mpnotify will be terminated automatically after 30 sec
+

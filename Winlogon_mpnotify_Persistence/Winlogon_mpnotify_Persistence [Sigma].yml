@@ -1,0 +1,46 @@
+title: Detect Persistence using mpnotify registry value
+id: f70d96a5-f342-49f0-8823-4e08618c7975
+description: detect changin mpnotify registry value for loading application on user startup
+References:
+  - https://persistence-info.github.io/Data/mpnotify.html
+status: Beta
+author: Karem Ali
+date: 2022/07/17
+tags:
+  - attack.T1574.001
+  - attack.T1574.002
+  - attack.persistence
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - SysmonModular rules don't containe default rules for generating the required logs for this rule, add Filecreation/ImageLoad for iscsicpl.dll
+        - those event could be mapped to any EDR equivelent events.
+detection:
+  RegistryModification:
+    EventID: 13
+    TargetObject: 
+      - "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\mpnotify"
+  condition: RegistryModification
+falsepositives: 
+  - None
+level: high
+---
+logsource:
+    product: windows
+    service: security
+    defination:
+        - Registry audit is not enabled by default, enable the audit for the group policy, then set audit permission on the registry path
+detection:
+  RegistryModification:                                
+        EventID: 4657
+        TargetObject:
+            - '\REGISTRY\MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+        ObjectValueName: mpnotify
+        OperationType: 
+          - '%%1905' #Existing registry value modified
+          - '%%1904' #New registry value created
+    condition: RegistryModification
+falsepositives: 
+  - None
+level: high
