@@ -1,0 +1,28 @@
+attack_technique: iSCSIcpl_UACBypass
+display_name: UAC bypass using DLL order Hijacking on iscsicpl.exe
+atomic_tests:
+- name: iSCSIcpl_UACBypass
+  auto_generated_guid: cc8e47f1-8283-4da7-b26a-68493bb93f64
+  description: |
+    > The iscsicpl.exe binary is vulnerable to a DLL Search Order hijacking vulnerability when running 32bit Microsoft binary on a 64bit host via SysWOW64.
+      The 32bit binary, will perform a search within user %Path% for the DLL iscsiexe.dll.
+      This can be exploited using a Proxy DLL to execute code via "iscsicpl.exe" as autoelevate is enabled.
+      - Author of the technique (https://github.com/hackerhouse-opensource/iscsicpl_bypassUAC)
+  supported_platforms:
+    - windows
+  input_arguments:
+    EXEPath:
+      description: Path to the elevated executable
+      type: string
+      default: cmd.exe   
+  executor:
+    command: |
+     PathToAtomicsFolderbin\iscsicpl_BypassUAC_x86.exe #{EXEPath}
+    cleanup_command: |
+      del %temp%\iscsiexe.dll
+      del %temp%\iscsiexe_org.dll
+    name: command_prompt
+    elevation_required: false
+
+# Note: The executable in the mpnotify will be terminated automatically after 30 sec
+

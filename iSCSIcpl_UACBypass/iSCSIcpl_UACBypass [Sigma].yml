@@ -1,0 +1,51 @@
+title: Detect UACbypass using iscsicpl.exe
+id: a0dd2db2-ab89-4dd9-8f6c-dd59ce57ee79
+description: detect the creation or loading of the non-standard iscsicpl.dll 
+references:
+  - https://github.com/hackerhouse-opensource/iscsicpl_bypassUAC
+status: Beta
+author: Karem Ali
+date: 2022/07/17
+tags:
+  - attack.T1574.001
+  - attack.T1574.002
+  - attack.persistence
+  - attack.T1548.02
+  - attack.Privilege_Escalation
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - SysmonModular rules don't containe default rules for generating the required logs for this rule, add Filecreation/ImageLoad for iscsicpl.dll
+        - those event could be mapped to any EDR equivelent events.
+detection:
+  ImageLoad:
+    EventID: 7
+    ImageLoaded: 
+      - iscsiexe.dll
+  ImagePath:
+    ImageLoadedFullPath: 
+      - "C:\\windows\\system32\\iscsiexe.dll"
+      - "C:\\windows\\syswow64\\iscsiexe.dll"
+  FileCreate:
+    EventID: 11
+    FileName: iscsiexe.dll
+  condition: (ImageLoad and not ImagePath) or (FileCreate)
+falsepositives: 
+  - None
+level: high
+---
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - those event could be mapped to any EDR equivelent events.
+detection:
+  ProcessCreate:
+    EventID: 1
+    ParentPath:  C:\Windows\SysWOW64\iscsicpl.exe
+    IntegrityLevel: high
+  condition: ProcessCreate
+falsepositives: 
+  - Unknown
+level: Medium
