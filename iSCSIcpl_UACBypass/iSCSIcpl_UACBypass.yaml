@@ -17,7 +17,7 @@ atomic_tests:
       default: cmd.exe   
   executor:
     command: |
-     PathToAtomicsFolderbin\iscsicpl_BypassUAC_x86.exe #{EXEPath}
+     "PathToAtomicsFolderiSCSIcpl_UACBypass\bin\iscsicpl_BypassUAC_x86.exe" #{EXEPath}
     cleanup_command: |
       del %temp%\iscsiexe.dll
       del %temp%\iscsiexe_org.dll
