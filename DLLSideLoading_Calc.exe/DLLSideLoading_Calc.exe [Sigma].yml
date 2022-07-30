@@ -1,0 +1,149 @@
+title: Detect Windowscodecs DLL sideloading by Calc.exe | QBot
+id: d1b3555e-3adf-4027-9dc8-836d11ed4d4a
+description: Detect the execution of calc.exe not from its standard location using Sysmon logs.
+references:
+  - https://blog.cyble.com/2022/07/21/qakbot-resurfaces-with-new-playbook/
+status: stable
+author: Karem Ali
+date: 2022/07/27
+tags:
+  - attack.T1574.002
+  - attack.defense_evasion
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - Ensure that this log will be generated using the used sysmon rules file | not in sysmonModular rules.
+        - Those event could be mapped to any EDR equivelent events.
+detection:
+  ProcessCreate:
+    EventID: 1
+    ProcessName: 
+      - calc.exe
+  ProcessPathExculation:
+    ProcessPath:
+      - c:\windows\system32\calc.exe
+      - c:\windows\syswow64\calc.exe
+  condition: ProcessCreate and not ProcessPathExculation
+falsepositives: 
+  - None
+level: high
+---
+title: Detect Calc.exe spwans regsvr.exe | QBot
+id: a52d8251-d7e3-479b-b1d4-440b71057030
+description: Detect the spwan of regsvr32.exe from calc.exe using sysmon logs| QBot runs regsvr32.exe from the DLL sideloaded by calc.exe.
+references:
+  - https://blog.cyble.com/2022/07/21/qakbot-resurfaces-with-new-playbook/
+status: stable
+author: Karem Ali
+date: 2022/07/27
+tags:
+  - attack.T1574.002
+  - attack.defense_evasion
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - those event could be mapped to any EDR equivelent events.
+detection:
+  ProcessCreate:
+    EventID: 1
+    ProcessName: 
+      - regsvr32.exe
+    ParentName:
+      - calc.exe
+  condition: ProcessCreate
+falsepositives: 
+  - None
+level: high
+---
+title: Detect Windowscodecs loaded from a non-standard location | QBot sideload it using calc.exe
+id: 7f8d64d0-9abf-4b3c-a88b-0a7168b9f4ea
+description: Detect Windowscodecs loaded from a non-standard location.
+references:
+  - https://blog.cyble.com/2022/07/21/qakbot-resurfaces-with-new-playbook/
+status: stable
+author: Karem Ali
+date: 2022/07/27
+tags:
+  - attack.T1574.002
+  - attack.defense_evasion
+logsource:
+    product: windows
+    service: sysmon
+    defination:
+        - Ensure that this log will be generated using the used sysmon rules file | not in sysmonModular rules.
+        - Those event could be mapped to any EDR equivelent events.
+detection:
+  ImageLoad:
+    EventID: 7
+    ImageName: 
+      - Windowscodecs.dll
+    #ProcessName: calc.exe
+  PathExclustion:
+    ImagePath:
+      - C:\Windows\SysWOW64\WindowsCodecs.dll
+      - C:\Windows\System32\WindowsCodecs.dll
+  condition: ImageLoad and not PathExclustion
+falsepositives: 
+  - None
+level: high
+---
+### Security logs | Pure windows logs
+title: Detect creation of calc.exe from a non-standard location | QBot techinque
+id: 49a768a0-72e9-411c-88af-76483ef14f7e
+description: Detect the execution of calc.exe not from its standard location using pure windows logs.
+references:
+  - https://blog.cyble.com/2022/07/21/qakbot-resurfaces-with-new-playbook/
+status: stable
+author: Karem Ali
+date: 2022/07/27
+tags:
+  - attack.T1574.002
+  - attack.defense_evasion
+logsource:
+    product: windows
+    service: security
+    defination:
+        - The event used (ProcessCreation) is not enabled by default, must be enabled from group policy.
+detection:
+  ProcessCreate:
+    EventID: 4688
+    ProcessName: 
+      - calc.exe
+  ProcessPathExculation:
+    ProcessPath:
+      - c:\windows\system32\calc.exe
+      - c:\windows\syswow64\calc.exe
+  condition: ProcessCreate and not ProcessPathExculation
+falsepositives: 
+  - None
+level: high
+---
+title:  Detect Calc.exe spwans regsvr.exe | QBot
+id: 8c2fea27-c2a8-4117-8d6b-4ff6c662f6bc
+description: Detect the spwan of regsvr32.exe from calc.exe using pure windows logs| QBot runs regsvr32.exe from the DLL sideloaded by calc.exe.
+references:
+  - https://blog.cyble.com/2022/07/21/qakbot-resurfaces-with-new-playbook/
+status: stable
+author: Karem Ali
+date: 2022/07/27
+tags:
+  - attack.T1574.002
+  - attack.defense_evasion
+logsource:
+    product: windows
+    service: security
+    defination:
+        - The event used (ProcessCreation) is not enabled by default, must be enabled from group policy.
+detection:
+  ProcessCreate:
+    EventID: 4688
+    ProcessName: 
+      - regsvr32.exe
+    ParentName:
+      - calc.exe
+  condition: ProcessCreate
+falsepositives: 
+  - None
+level: high

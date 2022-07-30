@@ -1,0 +1,14 @@
+attack_technique: DLL Sideloading - Calc.exe
+display_name: DLL Sideloading - Calc.exe
+atomic_tests:
+- name: DLL Sideloading - Calc.exe
+  auto_generated_guid: 6a2db8bd-d3c1-4e7e-99da-86f647d38820
+  description: |
+    SideLoad Windowscodecs.dll by running calc.exe (Windows7 version). this technique is used by QBot in thier spam campaigns
+  supported_platforms:
+    - windows 
+  executor:
+    command: |
+     "PathToAtomicsFolderDLLSideLoading_Calc.exe\bin\calc.exe"
+    name: command_prompt
+    elevation_required: false
